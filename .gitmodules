@@ -1,0 +1,3 @@
+[submodule "cpp_verification/FixedPointNumberLibrary"]
+	path = cpp_verification/FixedPointNumberLibrary
+	url = https://github.com/CW-B-W/FixedPointNumberLibrary
