@@ -4,13 +4,15 @@ help:
 	@printf '\n'
 	@printf 'options:\n'
 	@printf '\tfir\t\tRun FIR\n'
+	@printf '\tfft\t\tRun FFT\n'
 
 CC           = g++
 CXXFLAGS     = -Wall -O3 --std=c++17
-SUBMOD_PATH  = ./FixedPointNumberLibrary
-FIR_DEPS     = src/FIR.cpp $(SUBMOD_PATH)/include/FixedPointNumber.hpp
+FIR_DEPS     = src/FIR.cpp include/FixedPointNumber.hpp
 FIR_SRCS     = src/FIR.cpp
-INCLUDES     = -I./include -I$(SUBMOD_PATH)/include
+FFT_DEPS     = src/FFT.cpp include/FixedPointNumber.hpp
+FFT_SRCS     = src/FFT.cpp
+INCLUDES     = -I./include 
 
 .PHONY: fir
 fir: bin/FIR.out
@@ -18,6 +20,15 @@ fir: bin/FIR.out
 
 bin/FIR.out: $(FIR_DEPS)
 	$(CC) -o $@ $(FIR_SRCS) $(INCLUDES) $(CXXFLAGS)
+
+
+.PHONY: fir
+fft: bin/FFT.out
+	bin/FFT.out data/
+
+bin/FFT.out: $(FFT_DEPS)
+	$(CC) -o $@ $(FFT_SRCS) $(INCLUDES) $(CXXFLAGS)
+
 
 .PHONY: clean
 clean:
