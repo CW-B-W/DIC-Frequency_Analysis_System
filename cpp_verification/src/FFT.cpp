@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <complex>
+#include <cstdint>
+#include <cassert>
 #include "FixedPointNumber.hpp"
 
 using namespace std;
@@ -61,6 +63,36 @@ Complex fp_polar(double dr, double dtheta)
     return Complex(dp.real(), dp.imag());
 }
 
+Complex get_w(int idx)
+{
+    assert(idx < 8);
+    constexpr static uint32_t real[8] = {
+        0x00010000,
+        0x0000EC83,
+        0x0000B504,
+        0x000061F7,
+        0x00000000,
+        0xFFFF9E09,
+        0xFFFF4AFC,
+        0xFFFF137D
+    };
+
+    constexpr static uint32_t imag[8] = {
+        0x00000000,
+        0xFFFF9E09,
+        0xFFFF4AFC,
+        0xFFFF137D,
+        0xFFFF0000,
+        0xFFFF137D,
+        0xFFFF4AFC,
+        0xFFFF9E09
+    };
+
+    FixedPointNumber<15, 16> r = real[idx];
+    FixedPointNumber<15, 16> i = imag[idx];
+    return Complex(r, i);
+}
+
 ostream& operator<<(ostream &out, Complex c)
 {
     out << c.real.to_double() << " + " << c.imag.to_double() << "i";
@@ -97,11 +129,12 @@ vector<Complex> FFT_recursive(const vector<Complex> &x)
     for (int i = 0; i < N; ++i)
         y.emplace_back(0, 0);
 
-    Complex w = Complex(1.0, 0.0);
+    // Complex w = Complex(1.0, 0.0);
     for (int k = 0; k < M; ++k) {
+        Complex w = get_w(8 * k / M);
         y[k]   = y_even[k] + w * y_odd[k];
         y[k+M] = y_even[k] - w * y_odd[k];
-        w = w * fp_polar(1.0, -M_PI / M);
+        // w = w * fp_polar(1.0, -M_PI / M);
     }
     return y;
 }
@@ -141,7 +174,12 @@ int main(int argc, char** argv)
         }
         vector<Complex> y = FFT(x);
         for (int i = 0; i < 16; ++i) {
-            cout << t + i << ' ' << y[i] << endl;
+            FixedPointNumber<7, 8> fp_r = y[i].real;
+            FixedPointNumber<7, 8> fp_i = y[i].imag;
+            cout << t + i << ' ' << Complex(fp_r, fp_i) << endl;
+            cout << t + i << ' ' << fp_r << endl;
+            cout << t + i << ' ' << fp_i << endl;
+            cout << endl;
         }
     }
     fclose(fp);
