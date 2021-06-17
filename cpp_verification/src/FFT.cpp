@@ -9,10 +9,15 @@
 
 using namespace std;
 
+using FP_7_8   = FixedPointNumber<7, 8>;
+using FP_7_16  = FixedPointNumber<7, 16>;
+using FP_7_24  = FixedPointNumber<7, 24>;
+using FP_15_16 = FixedPointNumber<15, 16>;
+
 class Complex
 {
 public:
-    Complex(FixedPointNumber<7, 24> real, FixedPointNumber<7, 24> imag)
+    Complex(FP_7_24 real, FP_7_24 imag)
     {
         this->real = real;
         this->imag = imag;
@@ -21,40 +26,40 @@ public:
     Complex operator*(const Complex &rhs)
     {
         // (a+bi) * (c+dj) = (ac-bd) + i(ad+bc)
-        FixedPointNumber<7, 24> a = this->real;
-        FixedPointNumber<7, 24> b = this->imag;
-        FixedPointNumber<7, 24> c = rhs.real;
-        FixedPointNumber<7, 24> d = rhs.imag;
-        FixedPointNumber<7, 24> r = a*c - b*d;
-        FixedPointNumber<7, 24> i = a*d + b*c;
+        FP_7_24 a = this->real;
+        FP_7_24 b = this->imag;
+        FP_7_24 c = rhs.real;
+        FP_7_24 d = rhs.imag;
+        FP_7_24 r = a*c - b*d;
+        FP_7_24 i = a*d + b*c;
         return Complex(r, i);
     }
 
     Complex operator+(const Complex &rhs)
     {
         // (a+bi) + (c+dj) = (a+c) + i(b+d)
-        FixedPointNumber<7, 24> a = this->real;
-        FixedPointNumber<7, 24> b = this->imag;
-        FixedPointNumber<7, 24> c = rhs.real;
-        FixedPointNumber<7, 24> d = rhs.imag;
-        FixedPointNumber<7, 24> r = a+c;
-        FixedPointNumber<7, 24> i = b+d;
+        FP_7_24 a = this->real;
+        FP_7_24 b = this->imag;
+        FP_7_24 c = rhs.real;
+        FP_7_24 d = rhs.imag;
+        FP_7_24 r = a+c;
+        FP_7_24 i = b+d;
         return Complex(r, i);
     }
 
     Complex operator-(const Complex &rhs)
     {
-        FixedPointNumber<7, 24> a = this->real;
-        FixedPointNumber<7, 24> b = this->imag;
-        FixedPointNumber<7, 24> c = rhs.real;
-        FixedPointNumber<7, 24> d = rhs.imag;
-        FixedPointNumber<7, 24> r = a-c;
-        FixedPointNumber<7, 24> i = b-d;
+        FP_7_24 a = this->real;
+        FP_7_24 b = this->imag;
+        FP_7_24 c = rhs.real;
+        FP_7_24 d = rhs.imag;
+        FP_7_24 r = a-c;
+        FP_7_24 i = b-d;
         return Complex(r, i);
     }
 
-    FixedPointNumber<7, 24> real;
-    FixedPointNumber<7, 24> imag;
+    FP_7_24 real;
+    FP_7_24 imag;
 };
 
 Complex fp_polar(double dr, double dtheta)
@@ -88,8 +93,8 @@ Complex get_w(int idx)
         0xFFFF9E09
     };
 
-    FixedPointNumber<15, 16> r = real[idx];
-    FixedPointNumber<15, 16> i = imag[idx];
+    FP_15_16 r = real[idx];
+    FP_15_16 i = imag[idx];
     return Complex(r, i);
 }
 
@@ -139,7 +144,7 @@ vector<Complex> FFT_recursive(const vector<Complex> &x)
     return y;
 }
 
-vector<Complex> FFT(vector<FixedPointNumber<7, 24>> x)
+vector<Complex> FFT(vector<FP_7_24> x)
 {
     vector<Complex> cx;
     int i;
@@ -160,26 +165,29 @@ int main(int argc, char** argv)
     string path;
     FILE* fp = NULL;
     
-    vector<FixedPointNumber<7, 24>> x;
+    vector<FP_7_24> x;
     path = dir + "/FIR_Y_FixedPoint.dat";
     fp = fopen(path.c_str(), "r");
     assert(fp);
-    vector<FixedPointNumber<7, 8>> y_real;
-    vector<FixedPointNumber<7, 8>> y_imag;
+    vector<FP_7_8> y_real;
+    vector<FP_7_8> y_imag;
     for (int t = 0; t < 1024; t += 16) {
         x.clear();
         for (int i = 0; i < 16; ++i) {
             uint32_t x_in;
             fscanf(fp, "%x", &x_in);
-            FixedPointNumber<7, 8> x_in_fp = x_in;
+            FP_7_8 x_in_fp = x_in;
             x.emplace_back(x_in_fp);
         }
         vector<Complex> y = FFT(x);
         for (int i = 0; i < 16; ++i) {
-            FixedPointNumber<7, 8> fp_r = y[i].real;
-            FixedPointNumber<7, 8> fp_i = y[i].imag;
+            FP_7_8 fp_r = y[i].real;
+            FP_7_8 fp_i = y[i].imag;
             y_real.emplace_back(fp_r);
             y_imag.emplace_back(fp_i);
+            cout << t + i << ' ' << y[i] << endl;
+            cout << t + i << ' ' << y[i].real << endl;
+            cout << t + i << ' ' << y[i].imag << endl;
             cout << t + i << ' ' << Complex(fp_r, fp_i) << endl;
             cout << t + i << ' ' << fp_r << endl;
             cout << t + i << ' ' << fp_i << endl;
@@ -196,7 +204,7 @@ int main(int argc, char** argv)
     for (int i = 0; i < 1024; ++i) {
         uint32_t in;
         fscanf(fp, "%x", &in);
-        FixedPointNumber<7, 8> y_real_in_fp = in;
+        FP_7_8 y_real_in_fp = in;
         if (abs((int)y_real_in_fp.get_value() - (int)y_real[i].get_value()) > 1) {
             errcnt += 1;
             cout << i << "-th real :" << endl;
@@ -212,8 +220,8 @@ int main(int argc, char** argv)
     for (int i = 0; i < 1024; ++i) {
         uint32_t in;
         fscanf(fp, "%x", &in);
-        FixedPointNumber<7, 8> y_imag_in_fp = in;
-        if (abs((int)y_imag_in_fp.get_value() - (int)y_imag[i].get_value()) > 1) {
+        FP_7_8 y_imag_in_fp = in;
+        if (abs((int16_t)y_imag_in_fp.get_value() - (int16_t)y_imag[i].get_value()) > 1) {
             errcnt += 1;
             cout << i << "-th imag :" << endl;
             cout << "\t" << "Result = " << y_imag[i] << endl;
