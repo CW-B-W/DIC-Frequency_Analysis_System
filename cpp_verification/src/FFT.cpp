@@ -164,6 +164,8 @@ int main(int argc, char** argv)
     path = dir + "/FIR_Y_FixedPoint.dat";
     fp = fopen(path.c_str(), "r");
     assert(fp);
+    vector<FixedPointNumber<7, 8>> y_real;
+    vector<FixedPointNumber<7, 8>> y_imag;
     for (int t = 0; t < 1024; t += 16) {
         x.clear();
         for (int i = 0; i < 16; ++i) {
@@ -176,6 +178,8 @@ int main(int argc, char** argv)
         for (int i = 0; i < 16; ++i) {
             FixedPointNumber<7, 8> fp_r = y[i].real;
             FixedPointNumber<7, 8> fp_i = y[i].imag;
+            y_real.emplace_back(fp_r);
+            y_imag.emplace_back(fp_i);
             cout << t + i << ' ' << Complex(fp_r, fp_i) << endl;
             cout << t + i << ' ' << fp_r << endl;
             cout << t + i << ' ' << fp_i << endl;
@@ -184,5 +188,45 @@ int main(int argc, char** argv)
     }
     fclose(fp);
 
+
+    int errcnt = 0;
+    path = dir + "/FFT_real_FixedPoint.dat";
+    fp = fopen(path.c_str(), "r");
+    assert(fp);
+    for (int i = 0; i < 1024; ++i) {
+        uint32_t in;
+        fscanf(fp, "%x", &in);
+        FixedPointNumber<7, 8> y_real_in_fp = in;
+        if (abs((int)y_real_in_fp.get_value() - (int)y_real[i].get_value()) > 1) {
+            errcnt += 1;
+            cout << i << "-th real :" << endl;
+            cout << "\t" << "Result = " << y_real[i] << endl;
+            cout << "\t" << "Expect = " << y_real_in_fp << endl;
+        }
+    }
+    fclose(fp);
+
+    path = dir + "/FFT_imag_FixedPoint.dat";
+    fp = fopen(path.c_str(), "r");
+    assert(fp);
+    for (int i = 0; i < 1024; ++i) {
+        uint32_t in;
+        fscanf(fp, "%x", &in);
+        FixedPointNumber<7, 8> y_imag_in_fp = in;
+        if (abs((int)y_imag_in_fp.get_value() - (int)y_imag[i].get_value()) > 1) {
+            errcnt += 1;
+            cout << i << "-th imag :" << endl;
+            cout << "\t" << "Result = " << y_imag[i] << endl;
+            cout << "\t" << "Expect = " << y_imag_in_fp << endl;
+        }
+    }
+    fclose(fp);
+
+    if (errcnt) {
+        cout << "There are " << errcnt << " errors" << endl;
+    }
+    else {
+        cout << "All correct" << endl;
+    }
     return 0;
 }
