@@ -8,9 +8,9 @@ input       [15:0] data;
 output reg         fir_valid;
 output reg  [15:0] fir_d;
 
-reg         [ 9:0] sig_idx;
+reg         [10:0] sig_idx;
 reg         [15:0] sig      [31:0]; /* should always be positive */
-wire        [27:0] v        [31:0];
+reg         [27:0] v        [31:0];
 wire        [27:0] y;
 
 integer i;
@@ -18,12 +18,13 @@ integer i;
 task fp_mul;
     input      [19:0] vc; /* 1 bit, 3 bits, 16 bits    */
     input      [15:0] vx; /* 1 bit, 7 bits,  8 bits    */
-    output reg [19:0] vy; /* 1 bit, 3 bits, 16 bits    */
+    output reg [27:0] vy; /* 1 bit, 3 bits, 16 bits    */
     reg        [27:0] vt; /* intermediate value        */
 
-    reg s = vc[19] ^ vx[15];
+    reg s;
 
     begin
+        s = vc[19] ^ vx[15];
         if (vc[19])
             vc = ~vc + 1;
         if (vx[15])
@@ -51,11 +52,18 @@ always@(posedge clk, posedge rst) begin
             fir_valid <= 1;
             fir_d     <= y[23:8];
         end
+        else if (sig_idx >= 1024+32) begin
+            fir_valid <= 0;
+            fir_d     <= 0;
+        end
 
         for (i = 0; i <= 30; i = i + 1) begin
             sig[i] <= sig[i+1];
         end
-        sig[31]    <= data;
+        if (sig_idx < 1024)
+            sig[31] <= data;
+        else
+            sig[31] <= 0;
 
         sig_idx <= sig_idx + 1;
     end
