@@ -24,7 +24,7 @@ output reg [31:0] fft_d13;
 output reg [31:0] fft_d14;
 output reg [31:0] fft_d15;
 
-reg        [ 3:0] rd_idx;
+reg        [10:0] rd_idx;
 
 reg        [31:0] x_in       [15:0];
 wire       [31:0] x_out_real [15:0];
@@ -39,7 +39,7 @@ always@(posedge clk, posedge rst) begin
     end
     else begin
         if (fir_valid) begin
-            if (rd_idx == 15) begin
+            if (rd_idx > 1 && rd_idx[3:0] == 4'd0) begin
                 fft_valid <= 1;
                 fft_d0  <= {x_out_real[ 0][23:8], x_out_imag[ 0][23:8]};
                 fft_d1  <= {x_out_real[ 1][23:8], x_out_imag[ 1][23:8]};
@@ -58,18 +58,16 @@ always@(posedge clk, posedge rst) begin
                 fft_d14 <= {x_out_real[14][23:8], x_out_imag[14][23:8]};
                 fft_d15 <= {x_out_real[15][23:8], x_out_imag[15][23:8]};
             end
+            else begin
+                fft_valid <= 0;
+            end
             
-            for (i = 0; i  <= 14; i = i + 1) begin
+            for (i = 0; i <= 14; i = i + 1) begin
                 x_in[i] <= x_in[i+1];
             end
             x_in[15]    <= {{8{fir_d[15]}}, fir_d, 8'b0};
             
-            if (rd_idx == 15) begin
-                rd_idx <= 0;
-            end
-            else begin
-                rd_idx <= rd_idx + 1;
-            end
+            rd_idx <= rd_idx + 1;
         end
     end
 end
@@ -170,18 +168,23 @@ module fp_mul(_vc, _vx, vy);
     output reg [31:0] vy;  /* 1 bit, 15 bits, 16 bits */
     reg        [47:0] vt;  /* intermediate value      */
 
-    wire s = vc[31] ^ vx[31];
+    wire s = _vc[31] ^ _vx[31];
 
     always@(*)begin
         if (_vc[31])
             vc = ~_vc + 1;
         else
             vc = _vc;
+    end
+
+    always @(*) begin
         if (_vx[31])
             vx = ~_vx + 1;
         else
             vx = _vx;
+    end
 
+    always @(*) begin
         vt = vc * vx;
         if (s == 0)
             vy = vt[47:16] + vt[15];
