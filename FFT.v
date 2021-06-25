@@ -127,6 +127,10 @@ generate
         FFT_Submodule #(.N(N/2)) fft_sub1(in_real[N*BITS/2-1:0],      in_imag[N*BITS/2-1:0],      outsub_real[N*BITS/2-1:0],      outsub_imag[N*BITS/2-1:0]);
         FFT_Submodule #(.N(N/2)) fft_sub2(in_real[N*BITS-1:N*BITS/2], in_imag[N*BITS-1:N*BITS/2], outsub_real[N*BITS-1:N*BITS/2], outsub_imag[N*BITS-1:N*BITS/2]);
     end
+    else begin
+        assign out_real = in_real;
+        assign out_imag = in_imag;
+    end
 endgenerate
 
 genvar i;
@@ -222,6 +226,8 @@ module complex_add(a, b, c, d, e, f);
     input  [31:0] c;
     input  [31:0] d;
     // e + fi
-    output [31:0] e = a + c;
-    output [31:0] f = b + d;
+    output [31:0] e;
+    output [31:0] f;
+    assign e = a + c;
+    assign f = b + d;
 endmodule
