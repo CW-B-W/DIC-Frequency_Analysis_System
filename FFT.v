@@ -73,10 +73,10 @@ always@(posedge clk, posedge rst) begin
 end
 
 FFT_Submodule #(.N(16)) fft_sub(
-    {x_in[0], x_in[8], x_in[4], x_in[12], x_in[2], x_in[10], x_in[6], x_in[14], x_in[1], x_in[9], x_in[5], x_in[13], x_in[3], x_in[11], x_in[7], x_in[15]},
+    {x_in[15], x_in[7], x_in[11], x_in[3], x_in[13], x_in[5], x_in[9], x_in[1], x_in[14], x_in[6], x_in[10], x_in[2], x_in[12], x_in[4], x_in[8], x_in[0]},
     {32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0, 32'b0},
-    {x_out_real[0], x_out_real[1], x_out_real[2], x_out_real[3], x_out_real[4], x_out_real[5], x_out_real[6], x_out_real[7], x_out_real[8], x_out_real[9], x_out_real[10], x_out_real[11], x_out_real[12], x_out_real[13], x_out_real[14], x_out_real[15]},
-    {x_out_imag[0], x_out_imag[1], x_out_imag[2], x_out_imag[3], x_out_imag[4], x_out_imag[5], x_out_imag[6], x_out_imag[7], x_out_imag[8], x_out_imag[9], x_out_imag[10], x_out_imag[11], x_out_imag[12], x_out_imag[13], x_out_imag[14], x_out_imag[15]}
+    {x_out_real[15], x_out_real[14], x_out_real[13], x_out_real[12], x_out_real[11], x_out_real[10], x_out_real[9], x_out_real[8], x_out_real[7], x_out_real[6], x_out_real[5], x_out_real[4], x_out_real[3], x_out_real[2], x_out_real[1], x_out_real[0]},
+    {x_out_imag[15], x_out_imag[14], x_out_imag[13], x_out_imag[12], x_out_imag[11], x_out_imag[10], x_out_imag[9], x_out_imag[8], x_out_imag[7], x_out_imag[6], x_out_imag[5], x_out_imag[4], x_out_imag[3], x_out_imag[2], x_out_imag[1], x_out_imag[0]}
 );
 
 endmodule
