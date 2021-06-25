@@ -8,18 +8,18 @@ output reg  [15:0] fir_d;
 
 reg         [10:0] sig_idx;
 reg         [15:0] sig      [31:0]; /* should always be positive */
-reg         [27:0] v        [31:0];
-wire        [27:0] y;
+reg         [19:0] v        [31:0]; /* 1 bit, 3 bits, 16 bits    */
+wire        [19:0] y;
 
 reg         [19:0] FIR_C [31:0];
 
 integer i;
 
 task fp_mul;
-    input      [19:0] vc; /* 1 bit, 3 bits, 16 bits    */
-    input      [15:0] vx; /* 1 bit, 7 bits,  8 bits    */
-    output reg [27:0] vy; /* 1 bit, 3 bits, 16 bits    */
-    reg        [27:0] vt; /* intermediate value        */
+    input      [19:0] vc; /* 1 bit, 3 bits, 16 bits */
+    input      [15:0] vx; /* 1 bit, 7 bits,  8 bits */
+    output reg [19:0] vy; /* 1 bit, 3 bits, 16 bits */
+    reg        [27:0] vt; /* intermediate value     */
 
     reg s;
 
@@ -32,9 +32,9 @@ task fp_mul;
 
         vt = vc * vx;
         if (s == 0)
-            vy = vt[27:8] + vt[7];
+            vy = vt[27:8];
         else
-            vy = ~(vt[27:8] + vt[7]) + 1;
+            vy = ~vt[27:8] + 1;
     end
 endtask
 
@@ -83,7 +83,7 @@ always@(posedge clk, posedge rst) begin
     else begin
         if (sig_idx >= 32) begin
             fir_valid <= 1;
-            fir_d     <= y[23:8];
+            fir_d     <= {{4{y[19]}}, y[19:8] + y[19]}; // !!! WHY??? if without `+ y[19]`, precision error happens
         end
         else if (sig_idx >= 1024+32) begin
             fir_valid <= 0;
