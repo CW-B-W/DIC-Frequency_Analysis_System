@@ -83,7 +83,7 @@ always@(posedge clk, posedge rst) begin
     else begin
         if (sig_idx >= 32) begin
             fir_valid <= 1;
-            fir_d     <= {y[23:8] + y[23]}; // !!! WHY??? if without `+ y[19]`, precision error happens
+            fir_d     <= {y[23:8] + y[23]}; // !!! WHY??? if without `+ y[23]`, precision error happens
         end
         else if (sig_idx >= 1024+32) begin
             fir_valid <= 0;
