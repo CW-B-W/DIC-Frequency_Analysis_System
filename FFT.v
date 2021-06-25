@@ -38,7 +38,7 @@ always@(posedge clk, posedge rst) begin
         fft_valid <= 0;
     end
     else begin
-        if (fir_valid) begin
+        if (fir_valid && rd_idx <= 1024) begin
             if (rd_idx > 1 && rd_idx[3:0] == 4'd0) begin
                 fft_valid <= 1;
                 fft_d0  <= {x_out_real[ 0][23:8], x_out_imag[ 0][23:8]};
@@ -68,6 +68,9 @@ always@(posedge clk, posedge rst) begin
             x_in[15]    <= {{8{fir_d[15]}}, fir_d, 8'b0};
             
             rd_idx <= rd_idx + 1;
+        end
+        else begin
+            fft_valid <= 0;
         end
     end
 end
