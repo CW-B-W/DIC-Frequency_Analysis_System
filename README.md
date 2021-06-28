@@ -15,7 +15,7 @@ System block overview
 * Use `generate if/for` to recursively generate FFT sub-blocks
 
 ## [C++ verification](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/tree/master/cpp_verification)
-Use [CW-B-W/FixedPointNumberLibrary](https://github.com/CW-B-W/FixedPointNumberLibrary) to verify my thoughts using C++  
+Use [CW-B-W/FixedPointNumberLibrary](https://github.com/CW-B-W/FixedPointNumberLibrary) to verify my thoughts in C++ using Fixed-Point Number  
 ### Files
 * [FIR.cpp](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/blob/master/cpp_verification/src/FIR.cpp) is to verify the implementation of FIR
 * [FFT_std_complex.cpp](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/blob/master/cpp_verification/src/FFT_std_complex.cpp) is the implementation of FFT using `std::complex`, this is to verify the general implementation of FFT algorithm.
