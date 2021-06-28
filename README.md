@@ -12,7 +12,7 @@ System block overview
 * [Analysis.v](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/blob/master/Analysis.v) is the Analysis module, which output the frequency with greatest amplitude
 
 ### Features
-* Use generate if/for to recursively generate FFT sub-blocks
+* Use `generate if/for` to recursively generate FFT sub-blocks
 
 ## [C++ verification](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/tree/master/cpp_verification)
 Use [CW-B-W/FixedPointNumberLibrary](https://github.com/CW-B-W/FixedPointNumberLibrary) to verify my thoughts using C++  
