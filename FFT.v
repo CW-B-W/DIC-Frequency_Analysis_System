@@ -162,38 +162,15 @@ endgenerate
 endmodule
 
 //----------------------------------------------------------------
-module fp_mul(_vc, _vx, vy);
+module fp_mul(vc, vx, vy);
 //----------------------------------------------------------------
-    input      [31:0] _vc; /* 1 bit, 15 bits, 16 bits */
-    input      [31:0] _vx; /* 1 bit, 15 bits, 16 bits */
-    reg        [31:0] vc;  /* 1 bit, 15 bits, 16 bits */
-    reg        [31:0] vx;  /* 1 bit, 15 bits, 16 bits */
-    output reg [31:0] vy;  /* 1 bit, 15 bits, 16 bits */
-    reg        [47:0] vt;  /* intermediate value      */
+    input  signed [31:0] vc; /* 1 bit, 15 bits, 16 bits */
+    input  signed [31:0] vx; /* 1 bit, 15 bits, 16 bits */
+    output signed [31:0] vy; /* 1 bit, 15 bits, 16 bits */
+    wire   signed [47:0] vt; /* intermediate value      */
 
-    wire s = _vc[31] ^ _vx[31];
-
-    always@(*)begin
-        if (_vc[31])
-            vc = ~_vc + 1;
-        else
-            vc = _vc;
-    end
-
-    always @(*) begin
-        if (_vx[31])
-            vx = ~_vx + 1;
-        else
-            vx = _vx;
-    end
-
-    always @(*) begin
-        vt = vc * vx;
-        if (s == 0)
-            vy = vt[47:16] + vt[15];
-        else
-            vy = ~(vt[47:16] + vt[15]) + 1;
-    end
+    assign vt = vc * vx;
+    assign vy = vt[47:16];
 endmodule
 
 //----------------------------------------------------------------

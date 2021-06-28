@@ -71,7 +71,7 @@ generate
 endgenerate
 
 assign freq = v4[3:0];
-assign done = fft_valid && fft_cnt < (31) ? 1 : 0;
+assign done = fft_valid && fft_cnt < (31) ? 1 : 0; // fft_cmt < 31 is because of the bug of testbenches
 
 always@(posedge clk, posedge rst) begin
     if (rst)

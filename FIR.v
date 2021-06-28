@@ -8,7 +8,7 @@ output reg  [15:0] fir_d;
 
 reg         [10:0] sig_idx;
 reg         [15:0] sig      [31:0]; /* should always be positive */
-reg         [23:0] v        [31:0]; /* 1 bit, 7 bits, 16 bits    */
+wire        [23:0] v        [31:0]; /* 1 bit, 7 bits, 16 bits    */
 wire        [23:0] y;
 
 reg         [19:0] FIR_C [31:0];
@@ -16,25 +16,14 @@ reg         [19:0] FIR_C [31:0];
 integer i;
 
 task fp_mul;
-    input      [19:0] vc; /* 1 bit, 3 bits, 16 bits */
-    input      [15:0] vx; /* 1 bit, 7 bits,  8 bits */
-    output reg [23:0] vy; /* 1 bit, 7 bits, 16 bits */
-    reg        [31:0] vt; /* intermediate value     */
-
-    reg s;
+    input  signed     [19:0] vc; /* 1 bit, 3 bits, 16 bits */
+    input  signed     [15:0] vx; /* 1 bit, 7 bits,  8 bits */
+    output reg signed [23:0] vy; /* 1 bit, 7 bits, 16 bits */
+    reg signed        [31:0] vt; /* intermediate value     */
 
     begin
-        s = vc[19] ^ vx[15];
-        if (vc[19])
-            vc = ~vc + 1;
-        if (vx[15])
-            vx = ~vx + 1;
-
         vt = vc * vx;
-        if (s == 0)
-            vy = vt[31:8];
-        else
-            vy = ~vt[31:8] + 1;
+        vy = vt[31:8];
     end
 endtask
 
@@ -108,8 +97,20 @@ assign y = (((((v[0]) + (v[1])) + ((v[2]) + (v[3]))) + (((v[4]) + (v[5])) + ((v[
 genvar idx;
 generate
     for (idx = 0; idx < 32; idx = idx + 1) begin: FIR_BLOCK
-        always@(*) fp_mul(FIR_C[idx], sig[idx], v[idx]);
+        fp_mul_fir m_fir(FIR_C[idx], sig[idx], v[idx]);
     end
 endgenerate
 
+endmodule
+
+//----------------------------------------------------------------
+module fp_mul_fir(vc, vx, vy);
+//----------------------------------------------------------------
+    input  signed [19:0] vc; /* 1 bit, 3 bits, 16 bits */
+    input  signed [15:0] vx; /* 1 bit, 7 bits,  8 bits */
+    output signed [23:0] vy; /* 1 bit, 7 bits, 16 bits */
+    wire   signed [31:0] vt; /* intermediate value     */
+
+    assign vt = vc * vx;
+    assign vy = vt[31:8];
 endmodule
