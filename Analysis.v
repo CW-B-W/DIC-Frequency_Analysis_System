@@ -25,6 +25,7 @@ output        done;
 output  [3:0] freq;
 
 wire [31:0] amp [15:0];
+reg  [5:0]  fft_cnt;
 
 assign amp[0] = ($signed(fft_d0[31:16]) * $signed(fft_d0[31:16])) + ($signed(fft_d0[15:0]) * $signed(fft_d0[15:0]));
 assign amp[1] = ($signed(fft_d1[31:16]) * $signed(fft_d1[31:16])) + ($signed(fft_d1[15:0]) * $signed(fft_d1[15:0]));
@@ -70,7 +71,15 @@ generate
 endgenerate
 
 assign freq = v4[3:0];
-assign done = fft_valid ? 1 : 0;
+assign done = fft_valid && fft_cnt < (31) ? 1 : 0;
+
+always@(posedge clk, posedge rst) begin
+    if (rst)
+        fft_cnt <= 0;
+    else
+        if (fft_valid)
+            fft_cnt <= fft_cnt + 1;
+end
 
 endmodule
 
