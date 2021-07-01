@@ -7,7 +7,7 @@ output reg         fir_valid;
 output reg  [15:0] fir_d;
 
 reg         [10:0] sig_idx;
-reg         [15:0] sig      [31:0]; /* should always be positive */
+reg         [15:0] sig      [31:0];
 wire        [23:0] v        [31:0]; /* 1 bit, 7 bits, 16 bits    */
 wire        [23:0] y;
 
