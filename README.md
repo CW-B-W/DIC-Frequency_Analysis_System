@@ -13,6 +13,8 @@ System block overview
 
 ### Features
 * Use `generate if/for` to recursively generate FFT sub-blocks
+* Use `Transposed FIR` to reduce critical path length
+* Use `Multicycle design` to reduce clock-width
 
 ## [C++ verification](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/tree/master/cpp_verification)
 Use [CW-B-W/FixedPointNumberLibrary](https://github.com/CW-B-W/FixedPointNumberLibrary) to verify my thoughts in C++ using Fixed-Point Number  
