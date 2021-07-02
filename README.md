@@ -14,6 +14,7 @@ System block overview
 ### Features
 * Use `generate if/for` to recursively generate FFT sub-blocks
 * Use `Transposed FIR` to reduce critical path length
+  * Naive `FIR` can be found at [d3ae221](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/tree/d3ae2210c94795e800908cf27696681770e40f13)
 * Use `Multicycle design` to reduce clock-width
   * `Singlecycle design` can be found at [Singlecycle](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/tree/Singlecycle)
 
