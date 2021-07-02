@@ -1,5 +1,5 @@
 `timescale 1ns/10ps
-`define CYCLE     50                 // Modify your clock period here
+`define CYCLE     32                 // Modify your clock period here
 //`define SDFFILE    "FAS_syn.sdf"    // Modify your sdf file name
 `define End_CYCLE  100000          // Modify cycle times once your design need more cycle times!
 
